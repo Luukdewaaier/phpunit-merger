@@ -70,7 +70,9 @@ class LogCommand extends Command
 
         $file = $input->getArgument('file');
         if (!is_dir(dirname($file))) {
-            @mkdir(dirname($file), 0777, true);
+            if (!mkdir($concurrentDirectory = dirname($file), 0777, true) && !is_dir($concurrentDirectory)) {
+                throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
+            }
         }
         $this->document->save($input->getArgument('file'));
 
